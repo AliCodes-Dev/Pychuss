@@ -77,7 +77,6 @@ class Player:
                     (row, col), (self.game.settings.squarewidth, self.game.settings.squareheight), (
                         self.game.settings.SCREEN_WIDTH, self.game.settings.SCREEN_HEIGHT),
                     f"assets/{self.id}/{piece_type}.png", self.game.settings.padding, piece_id, self.game)
-                print(piece, piece_id)
 
                 # self.game.board.set_piece(piece_id, piece)
                 self.pieces.append(piece_id)

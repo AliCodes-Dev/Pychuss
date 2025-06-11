@@ -122,7 +122,7 @@ class Piece:
         if Pos not in self.valid_moves:
             return
 
-        self.board.move_picece_on_board(self.id, (row, col))
+        self.board.move_piece_on_board(self.id, (row, col))
         self.game.change_turn(self.id)
 
         self.has_moved = True

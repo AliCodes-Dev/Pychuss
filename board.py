@@ -11,7 +11,7 @@ class Board:
         self.board[row][col] = piece.id
         self.pieces[piece.id] = piece
 
-    def move_picece_on_board(self, piece_id, new_pos):
+    def move_piece_on_board(self, piece_id, new_pos):
         row, col = new_pos
         piece = self.get_piece(piece_id)
         self.board[piece.row][piece.col] = None
