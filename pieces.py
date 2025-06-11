@@ -162,29 +162,29 @@ class Pawn(Piece):
         if self.has_moved:
             self.squares = 1
 
-    def get_validmoves(self, team_pieces):
+    def get_validmoves(self, team_pieces: list[str]) -> None:
         valid_moves = []
-        for direction in self.directions:
-            next_row = self.row
-            next_col = self.col
-            dx, dy = self.game.settings.directions[direction]
-            for _ in range(self.squares):
-                next_row += dx
-                next_col += dy
 
-                if not (0 <= next_row < 8 and 0 <= next_col < 8):
-                    break
-                if self.board.get_piece_id((next_row, next_col)) is not None:
-                    target_piece = self.board.get_piece_id(
-                        (next_row, next_col))
-                    if target_piece not in team_pieces and direction not in ["up", "down"]:
+        direction = -1 if self.id.startswith("white") else 1
+
+        next_row = self.row + direction
+        if 0 <= next_row < 8:
+
+            if self.board.get_piece_id((next_row, self.col)) is None:
+                valid_moves.append((next_row, self.col))
+                # Two squares forward
+                if not self.has_moved:
+                    next_row2 = self.row + 2 * direction
+                    if 0 <= next_row2 < 8 and self.board.get_piece_id((next_row2, self.col)) is None:
+                        valid_moves.append((next_row2, self.col))
+
+            # Captures
+            for dc in [-1, 1]:
+                next_col = self.col + dc
+                if 0 <= next_col < 8:
+                    target_id = self.board.get_piece_id((next_row, next_col))
+                    if target_id and target_id not in team_pieces:
                         valid_moves.append((next_row, next_col))
-                        break
-
-                    break
-                if direction not in ["up", "down"]:
-                    continue
-                valid_moves.append((next_row, next_col))
 
         self.valid_moves = valid_moves
 
@@ -227,31 +227,21 @@ class Knight(Piece):
     def __init__(self, cords, size, screen_size,  texture_url, padding, id, game):
         super().__init__(cords, size, screen_size,
                          texture_url, padding, id, ["knight"], 1, game)
-    
 
-    def get_validmoves(self, team_pieces):
+    def get_validmoves(self, team_pieces: list[str]) -> None:
         valid_moves = []
         knight_moves = self.game.settings.directions["knight"]
-        # Knight moves are L-shaped: two squares in one direction and one square perpendicular
-        next_row = self.row
-        next_col = self.col
-
         for dy, dx in knight_moves:
-
             next_row = self.row + dy
             next_col = self.col + dx
 
             if not (0 <= next_row < 8 and 0 <= next_col < 8):
-
                 continue
 
-            if self.board.get_piece_id(
-                    (next_row, next_col)) is not None:
-                target_piece = self.board.get_piece_id(
-                    (next_row, next_col))
-                if target_piece not in team_pieces:
+            piece_id = self.board.get_piece_id((next_row, next_col))
+            if piece_id:
+                if piece_id not in team_pieces:
                     valid_moves.append((next_row, next_col))
-
                 continue
             valid_moves.append((next_row, next_col))
 

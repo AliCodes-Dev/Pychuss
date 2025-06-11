@@ -25,6 +25,10 @@ class Game:
 
     def change_turn(self, piece_id: str) -> None:
         piece = self.board.get_piece(piece_id)
+        if piece is None:
+            print(f"Invalid piece_id: {piece_id}")
+            return
+
         piece.selected = False
         self.players[self.current_player].selected = False
 
@@ -88,5 +92,5 @@ class Game:
                 self.running = False
 
 
-chess = Game()
-chess.runGame()
+chess_game = Game()
+chess_game.runGame()
