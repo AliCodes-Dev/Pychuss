@@ -2,11 +2,11 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg" width="80" alt="Chess Pawn"/>
 </p>
 
-<h1 align="center">♜ PyChuss – Chess Game in Python (with Pygame)</h1>
+<h1 align="center">♜ PyChuss – Python Chess Game (Pygame)</h1>
 
 <p align="center">
-  <b>A fully playable, turn-based chess game written in Python using Pygame.<br>
-  Built for learning, for fun, and for the love of chess logic.</b>
+  <b>A fully playable, turn-based chess game built in Python with Pygame.<br>
+  Designed for learning, fun, and exploring chess logic.</b>
 </p>
 
 <p align="center">
@@ -18,12 +18,17 @@
 
 ---
 
-## 🧠 About the Project
+## 🧠 About PyChuss
 
-**PyChuss** is not just another beginner Python project. It’s a structured, object-oriented chess game built from the ground up using **Pygame**. It features real piece movement rules, a working board, capturing logic, and a dev-friendly architecture.
+**PyChuss** is a structured, object-oriented chess game built from scratch using **Pygame**. It features:
 
-Perfect if you’re learning:
-- Game architecture design (OOP)
+- Real chess piece movement and capturing rules
+- A working, interactive board
+- Clean, modular architecture for easy learning and extension
+
+Great for learning about:
+
+- Game architecture (OOP)
 - Turn-based logic
 - Rule validation
 - Modular Python development
@@ -32,20 +37,20 @@ Perfect if you’re learning:
 
 ## 🧱 Features
 
-✅ Clean OOP design with modular components  
-✅ Mouse-based gameplay — click to move  
-✅ Accurate chess piece movement (all 6 types)  
-✅ Legal captures with real board state updates  
-✅ Turn-based system: White vs Black  
-✅ Git-tracked public repo — dev-friendly
+- ✅ Modular, object-oriented codebase
+- ✅ Mouse-driven gameplay (click to move)
+- ✅ Accurate movement for all chess pieces
+- ✅ Legal captures and board state updates
+- ✅ Turn-based play: White vs Black
+- ✅ Public, Git-tracked repository
 
 ---
 
-## 🏗️ What’s Cooking (To-Do)
+## 🚧 Roadmap
 
-- ♚ Check / Checkmate Detection  
-- ✨ Visual move highlighting  
-- 🤝 Stalemate / Draw rules  
+- ♚ Check & Checkmate detection
+- ✨ Visual move highlighting
+- 🤝 Stalemate & draw rules
 - 🧵 GUI polish (restart menu, win screen, etc.)
 
 ---
@@ -54,54 +59,60 @@ Perfect if you’re learning:
 
 | Tool      | Purpose                    |
 |-----------|----------------------------|
-| 🐍 Python | Main programming language |
-| 🎮 Pygame | Game rendering + input    |
-| 🌀 Git    | Source control            |
+| 🐍 Python | Main programming language  |
+| 🎮 Pygame | Game rendering & input     |
+| 🌀 Git    | Source control             |
 
 ---
 
-## 📂 Directory Structure
+## 📂 Project Structure
 
+```
 PyChuss/
-├── main.py # Entry point – game loop
-├── board.py # Chessboard logic
-├── pieces/ # Folder for piece classes
-│ ├── bishop.py
-│ ├── king.py
-│ ├── knight.py
-│ ├── pawn.py
-│ ├── queen.py
-│ ├── rook.py
-│ └── init.py
-├── assets/ # Piece sprites and visuals
-│ └── (images go here)
-├── README.md # You're looking at it
-
-yaml
-Copy
-Edit
+├── main.py         # Entry point – game loop
+├── board.py        # Chessboard logic
+├── pieces/         # Piece classes
+│   ├── bishop.py
+│   ├── king.py
+│   ├── knight.py
+│   ├── pawn.py
+│   ├── queen.py
+│   ├── rook.py
+│   └── __init__.py
+├── assets/         # Piece sprites and visuals
+│   └── (images go here)
+├── README.md       # This file
+```
 
 ---
 
 ## 🚀 Getting Started
 
-Make sure you have Python and Pygame installed.
+1. **Install dependencies:**
 
-```bash
-# Step 1: Install pygame
-pip install pygame
-```
-```bash
-# Step 2: Run the game
-python main.py
-```
-Works best with Python 3.10+
-Make sure your sprites (assets) are properly loaded!
+   ```bash
+   pip install pygame
+   ```
 
-📸 Screenshot
-(Coming soon – add a gameplay GIF or image here)
+2. **Run the game:**
 
-⚖️ License
-MIT License.
-Use it, modify it, learn from it, break it if you have to. Just don’t sell it like you made it 😤.
+   ```bash
+   python main.py
+   ```
+
+> **Note:** Works best with Python 3.10+.  
+> Ensure your assets are in place for sprites to load correctly.
+
+---
+
+## 📸 Screenshots
+
+*Coming soon – add a gameplay GIF or image here!*
+
+---
+
+## ⚖️ License
+
+MIT License.  
+Feel free to use, modify, and learn from this project. Please don’t claim it as your own for resale.
 
