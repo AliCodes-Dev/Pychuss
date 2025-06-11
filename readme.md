@@ -90,9 +90,11 @@ Make sure you have Python and Pygame installed.
 ```bash
 # Step 1: Install pygame
 pip install pygame
-
+```
+```bash
 # Step 2: Run the game
 python main.py
+```
 Works best with Python 3.10+
 Make sure your sprites (assets) are properly loaded!
 
