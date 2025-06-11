@@ -20,7 +20,7 @@ class Piece:
 
         texture_url: str,
         padding: int,
-        id: str,
+        piece_id: str,
         directions: list[str],
         squares: int,
         game
@@ -48,7 +48,7 @@ class Piece:
         self.selected = False
 
         # Identity
-        self.id = id
+        self.id = piece_id
 
         # Movement
         self.directions = directions
@@ -56,14 +56,15 @@ class Piece:
         self.has_moved = False
         self.valid_moves = []
 
+        print("id", self.id)
         # Place piece on board
-        self.board[self.row][self.col] = self.id
+        self.game.board.set_piece(self)
 
     def make_move_surface(self):
         if not self.valid_moves:
             self.get_validmoves(
                 self.game.players[self.game.current_player].pieces)
-        print("Valid Moves",self.valid_moves)
+        print("Valid Moves", self.valid_moves)
         move_surface = pygame.Surface(
             (self.screenWidth, self.screenHeight), pygame.SRCALPHA)
         for row, col in self.valid_moves:
@@ -86,8 +87,9 @@ class Piece:
 
                 if not (0 <= next_row < 8 and 0 <= next_col < 8):
                     break
-                if self.game.board[next_row][next_col] is not None:
-                    target_piece = self.game.board[next_row][next_col]
+                if self.game.board.get_piece_id((next_row, next_col)) is not None:
+                    target_piece = self.game.board.get_piece_id(
+                        (next_row, next_col))
                     if target_piece not in team_pieces:
                         valid_moves.append((next_row, next_col))
 
@@ -120,15 +122,8 @@ class Piece:
         if Pos not in self.valid_moves:
             return
 
-        self.board[self.row][self.col] = None
-        self.row, self.col = row, col
-        self.board[self.row][self.col] = self.id
-        self.selected = False
-        self.game.players[self.game.current_player].selected = False
-        self.render_piece()
-        self.game.current_player = (self.game.current_player + 1) % 2
-        self.game.next_moves_surface = None
-        self.valid_moves.clear()
+        self.board.move_picece_on_board(self.id, (row, col))
+        self.game.change_turn(self.id)
 
         self.has_moved = True
         if "pawn" in self.id:
@@ -138,13 +133,16 @@ class Piece:
     def kill(self, Pos: tuple, team_pieces) -> None:
         if not self.valid_moves:
             self.get_validmoves(team_pieces)
-
         row, col = Pos
-        if self.game.board[row][col] not in team_pieces:
-            target_piece = self.game.board[row][col]
-            if (row, col) in self.valid_moves:
-                self.game.pieces.pop(target_piece)
-                self.move_Piece(Pos, team_pieces)
+        if (row, col) not in self.valid_moves:
+            return
+
+        if self.board.get_piece_id(
+                (row, col)) not in team_pieces:
+            target_piece = self.board.get_piece_id(
+                (row, col))
+            self.board.remove_piece(target_piece)
+            self.move_Piece(Pos, team_pieces)
 
 
 class Pawn(Piece):
@@ -170,8 +168,9 @@ class Pawn(Piece):
 
                 if not (0 <= next_row < 8 and 0 <= next_col < 8):
                     break
-                if self.game.board[next_row][next_col] is not None:
-                    target_piece = self.game.board[next_row][next_col]
+                if self.board.get_piece_id((next_row, next_col)) is not None:
+                    target_piece = self.board.get_piece_id(
+                        (next_row, next_col))
                     if target_piece not in team_pieces and direction not in ["up", "down"]:
                         valid_moves.append((next_row, next_col))
                         break
@@ -241,8 +240,10 @@ class Knight(Piece):
 
                 continue
 
-            if self.game.board[next_row][next_col] is not None:
-                target_piece = self.game.board[next_row][next_col]
+            if self.board.get_piece_id(
+                    (next_row, next_col)) is not None:
+                target_piece = self.board.get_piece_id(
+                    (next_row, next_col))
                 if target_piece not in team_pieces:
                     valid_moves.append((next_row, next_col))
 

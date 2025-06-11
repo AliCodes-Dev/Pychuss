@@ -4,6 +4,7 @@ import sys
 
 import settings
 from player import Player
+from board import Board
 
 
 class Game:
@@ -15,10 +16,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.board = self.settings.emptyboard
-
-        self.pieces = {
-        }
+        self.board = Board(self.settings)
 
         self.black = Player(self, "black")
         self.white = Player(self, "white")
@@ -37,9 +35,19 @@ class Game:
         self.next_move_icon = pygame.image.load(self.settings.next_move_icon)
         self.next_moves_surface = None
 
+    def change_turn(self, piece_id):
+        piece = self.board.get_piece(piece_id)
+        piece.selected = False
+        self.players[self.current_player].selected = False
+
+        self.current_player = (self.current_player + 1) % 2
+        self.next_moves_surface = None
+        piece.valid_moves.clear()
+
     def _render_pieces(self):
         # This function is temporarily used to render all pieces. A class Player will be made to handle respective piece's movements and rendering.
-        for piece in self.pieces.values():
+        # print(self.board.pieces.values())
+        for piece in self.board.pieces.values():
             piece.render_piece()
 
     def _setWindow(self):
