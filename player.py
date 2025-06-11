@@ -1,9 +1,13 @@
 
 
 import pygame
-
-
 import pieces
+
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from main import Game
+
 
 start_row = {
     "black": 0,
@@ -43,19 +47,19 @@ piece_map = [
 
 
 class Player:
-    def __init__(self, game, color) -> None:
+    def __init__(self, game: "Game", color) -> None:
         self.id = color
         self.game = game
 
         self.start_row = start_row[color]
 
-        self.pieces = []
+        self.pieces: list[str] = []
 
         self.selected = False
-        self.selected_piece = ""
+        self.selected_piece: str = ""
         self._create_pieces()
 
-    def _create_pieces(self):
+    def _create_pieces(self) -> None:
         row = self.start_row
         local_piece_map = piece_map[::-1] if self.id == "black" else piece_map
         # local_piece_map = piece_map
@@ -85,7 +89,7 @@ class Player:
 
             row += 1
 
-    def check_selection(self, event):
+    def check_selection(self, event:pygame.event.Event) -> None:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button != 1:
                 return

@@ -1,3 +1,4 @@
+import pygame
 
 
 class Settings:
@@ -26,6 +27,14 @@ class Settings:
             "knight": [(2, 1), (2, -1), (-2, 1), (-2, -1),
                        (1, 2), (1, -2), (-1, 2), (-1, -2)]
         }
+
+        self.tiles = [pygame.Surface(
+            (self.squarewidth, self.squareheight)),
+            pygame.Surface(
+            (self.squarewidth, self.squareheight))]
+
+        self.tiles[0].fill(self.squareColors[0])
+        self.tiles[1].fill(self.squareColors[1])
 
 
 # seti = Settings()

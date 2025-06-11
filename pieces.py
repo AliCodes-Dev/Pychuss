@@ -1,5 +1,9 @@
 import pygame
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from main import Game  # Adjust the import path if needed
+
 
 pieces = {
     "pawn": "Pawn",
@@ -23,7 +27,7 @@ class Piece:
         piece_id: str,
         directions: list[str],
         squares: int,
-        game
+        game: "Game"
 
     ) -> None:
 
@@ -54,17 +58,17 @@ class Piece:
         self.directions = directions
         self.squares = squares
         self.has_moved = False
-        self.valid_moves = []
+        self.valid_moves: list[tuple[int, int]] = []
 
         print("id", self.id)
         # Place piece on board
         self.game.board.set_piece(self)
 
-    def make_move_surface(self):
+    def make_move_surface(self) -> None:
         if not self.valid_moves:
             self.get_validmoves(
                 self.game.players[self.game.current_player].pieces)
-        print("Valid Moves", self.valid_moves)
+
         move_surface = pygame.Surface(
             (self.screenWidth, self.screenHeight), pygame.SRCALPHA)
         for row, col in self.valid_moves:
@@ -72,55 +76,57 @@ class Piece:
                               (col * self.width, row * self.height))
         self.game.next_moves_surface = move_surface
 
-    def get_validmoves(self, team_pieces):
+    def get_validmoves(self, team_pieces: list[str]) -> None:
         if self.valid_moves:
             return
 
         valid_moves = []
         for direction in self.directions:
-            next_row = self.row
-            next_col = self.col
             dy, dx = self.game.settings.directions[direction]
+            next_row, next_col = self.row, self.col
             for _ in range(self.squares):
                 next_row += dy
                 next_col += dx
 
                 if not (0 <= next_row < 8 and 0 <= next_col < 8):
                     break
-                if self.game.board.get_piece_id((next_row, next_col)) is not None:
-                    target_piece = self.game.board.get_piece_id(
-                        (next_row, next_col))
-                    if target_piece not in team_pieces:
-                        valid_moves.append((next_row, next_col))
 
+                piece_id = self.board.get_piece_id((next_row, next_col))
+                if piece_id:
+                    if piece_id not in team_pieces:
+                        valid_moves.append((next_row, next_col))
                     break
+
                 valid_moves.append((next_row, next_col))
         self.valid_moves = valid_moves
 
-    def render_piece(self):
+    def highlight_piece(self):
+        rect_y = self.row*self.height
+        rect_x = self.col*self.width
+        rect_w = self.width
+        rect_h = self.height
+        pygame.draw.rect(
+            self.game.screen,
+            (255, 255, 0),  # Yellow color
+            pygame.Rect(rect_x, rect_y, rect_w, rect_h),
+            4  # Thickness of the border
+        )
+
+    def render_piece(self) -> None:
 
         self.game.screen.blit(
             self.texture, (self.col*self.width+self.padding-2, self.row*self.height+self.padding))
         if self.selected:
-            rect_y = self.row*self.height
-            rect_x = self.col*self.width
-            rect_w = self.width
-            rect_h = self.height
-            pygame.draw.rect(
-                self.game.screen,
-                (255, 255, 0),  # Yellow color
-                pygame.Rect(rect_x, rect_y, rect_w, rect_h),
-                4  # Thickness of the border
-            )
+            self.highlight_piece()
 
-    def move_Piece(self, Pos: tuple, team_pieces, moves=None):
+    def move_Piece(self, Pos: tuple[int, int], team_pieces: list[str]) -> bool:
         row, col = Pos
 
         if not self.valid_moves:
             self.get_validmoves(team_pieces)
 
         if Pos not in self.valid_moves:
-            return
+            return False
 
         self.board.move_piece_on_board(self.id, (row, col))
         self.game.change_turn(self.id)
@@ -130,7 +136,7 @@ class Piece:
             self.squares = 1
         return True
 
-    def kill(self, Pos: tuple, team_pieces) -> None:
+    def kill(self, Pos: tuple[int, int], team_pieces: list[str]) -> None:
         if not self.valid_moves:
             self.get_validmoves(team_pieces)
         row, col = Pos
@@ -221,8 +227,7 @@ class Knight(Piece):
     def __init__(self, cords, size, screen_size,  texture_url, padding, id, game):
         super().__init__(cords, size, screen_size,
                          texture_url, padding, id, ["knight"], 1, game)
-        self.directions = ["knight"]
-        self.squares = 1
+    
 
     def get_validmoves(self, team_pieces):
         valid_moves = []
