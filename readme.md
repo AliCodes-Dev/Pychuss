@@ -2,47 +2,70 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg" width="80" alt="Chess Pawn"/>
 </p>
 
-<h1 align="center">♟️ PyChuss – A Python Chess Game with Pygame</h1>
+<h1 align="center">♜ PyChuss – Chess Game in Python (with Pygame)</h1>
 
 <p align="center">
-  <i>Chess, but make it code. Built from scratch with Python and Pygame, featuring clean architecture, piece logic, and good vibes.</i>
+  <b>A fully playable, turn-based chess game written in Python using Pygame.<br>
+  Built for learning, for fun, and for the love of chess logic.</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python" />
+  <img src="https://img.shields.io/badge/Pygame-2.x-green?logo=pygame" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  <img src="https://img.shields.io/badge/Status-In%20Progress-orange" />
 </p>
 
 ---
 
-## 🧠 Overview
+## 🧠 About the Project
 
-**PyChuss** is a chess game coded in Python using Pygame. It’s fully playable with click-based movement, accurate piece rules, and capturing logic. Ideal if you wanna learn game logic, object-oriented design, or just flex your Python skills in something real.
+**PyChuss** is not just another beginner Python project. It’s a structured, object-oriented chess game built from the ground up using **Pygame**. It features real piece movement rules, a working board, capturing logic, and a dev-friendly architecture.
 
----
-
-## 🚩 Features
-
-- ✅ Full 8x8 board setup
-- ✅ All standard pieces with correct movement
-- ✅ Piece capturing logic
-- ✅ Turn-based system (White vs Black)
-- ✅ Mouse-based input — click to play
-- ✅ Modular codebase (OOP, clean structure)
-- ✅ Git-tracked and public repo (source control FTW)
+Perfect if you’re learning:
+- Game architecture design (OOP)
+- Turn-based logic
+- Rule validation
+- Modular Python development
 
 ---
 
-## 🔧 In Progress
+## 🧱 Features
 
-- ⏳ Check and Checkmate detection
-- ⏳ Draw / Stalemate conditions
-- ⏳ Move highlighting (show valid moves)
-- ⏳ GUI polishing (menu, restart, etc.)
+✅ Clean OOP design with modular components  
+✅ Mouse-based gameplay — click to move  
+✅ Accurate chess piece movement (all 6 types)  
+✅ Legal captures with real board state updates  
+✅ Turn-based system: White vs Black  
+✅ Git-tracked public repo — dev-friendly
 
 ---
 
-## 🧩 File Structure
+## 🏗️ What’s Cooking (To-Do)
 
-.
-├── main.py # Main game loop
-├── board.py # Board class + logic
-├── pieces/ # Folder for individual piece classes
+- ♚ Check / Checkmate Detection  
+- ✨ Visual move highlighting  
+- 🤝 Stalemate / Draw rules  
+- 🧵 GUI polish (restart menu, win screen, etc.)
+
+---
+
+## 🛠 Tech Stack
+
+| Tool      | Purpose                    |
+|-----------|----------------------------|
+| 🐍 Python | Main programming language |
+| 🎮 Pygame | Game rendering + input    |
+| 🌀 Git    | Source control            |
+
+---
+
+## 📂 Directory Structure
+
+PyChuss/
+├── main.py # Entry point – game loop
+├── board.py # Chessboard logic
+├── pieces/ # Folder for piece classes
 │ ├── bishop.py
 │ ├── king.py
 │ ├── knight.py
@@ -50,30 +73,33 @@
 │ ├── queen.py
 │ ├── rook.py
 │ └── init.py
-├── assets/ # Sprites and visual stuff
-│ └── (piece images)
-├── README.md
+├── assets/ # Piece sprites and visuals
+│ └── (images go here)
+├── README.md # You're looking at it
+
+yaml
+Copy
+Edit
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Getting Started
 
-- 🐍 **Python** 3.10+
-- 🎮 **Pygame** (for rendering + input)
-- 🌀 **Git** (source control and commits)
-
----
-
-## ⚡ How to Run
+Make sure you have Python and Pygame installed.
 
 ```bash
-# Install pygame if you haven't
+# Step 1: Install pygame
 pip install pygame
 
-# Run the game
+# Step 2: Run the game
 python main.py
+Works best with Python 3.10+
+Make sure your sprites (assets) are properly loaded!
 
+📸 Screenshot
+(Coming soon – add a gameplay GIF or image here)
 
-License
-MIT License – Use it, mod it, share it, no strings attached.
-```
+⚖️ License
+MIT License.
+Use it, modify it, learn from it, break it if you have to. Just don’t sell it like you made it 😤.
+
