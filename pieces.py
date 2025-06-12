@@ -136,19 +136,22 @@ class Piece:
             self.squares = 1
         return True
 
-    def kill(self, Pos: tuple[int, int], team_pieces: list[str]) -> None:
+    def kill(self, Pos: tuple[int, int], team_pieces: list[str]) -> bool:
         if not self.valid_moves:
             self.get_validmoves(team_pieces)
         row, col = Pos
         if (row, col) not in self.valid_moves:
-            return
+            return False
 
         if self.board.get_piece_id(
                 (row, col)) not in team_pieces:
             target_piece = self.board.get_piece_id(
                 (row, col))
+            if not target_piece:
+                return False
             self.board.remove_piece(target_piece)
             self.move_Piece(Pos, team_pieces)
+        return True
 
 
 class Pawn(Piece):
@@ -158,9 +161,6 @@ class Pawn(Piece):
             directions = ["down", "down_left", "down_right"]
         super().__init__(cords, size, screen_size,
                          texture_url, padding, id, directions, 2, game)
-
-        if self.has_moved:
-            self.squares = 1
 
     def get_validmoves(self, team_pieces: list[str]) -> None:
         valid_moves = []
@@ -188,14 +188,29 @@ class Pawn(Piece):
 
         self.valid_moves = valid_moves
 
+    def promote(self):
+        row, col = self.row, self.col
+        piece_id = self.id.split('_')
+        print(piece_id)
+        self.board.remove_piece(self.id)
+        p_type = "queen"
+        # p_type = input("Enter to promote: ")
+        self.board.create_piece(p_type, (row, col), piece_id, self.game)
+
+    def move_Piece(self, Pos: tuple[int, int], team_pieces: list[str]) -> bool:
+        super().move_Piece(Pos, team_pieces)
+        if self.row == 0 or self.row == 7:
+            self.promote()
+
+        return True
+
+
 
 class Queen(Piece):
     def __init__(self, cords, size, screen_size,  texture_url, padding, id, game):
         super().__init__(cords, size, screen_size,
-                         texture_url, padding, id, ["up", "down", "left", "right", "up-left", "up-right", "down-left", "down-right"], 8, game)
-        self.directions = ["up", "down", "left", "right",
-                           "up_left", "up_right", "down_left", "down_right"]
-        self.squares = 8
+                         texture_url, padding, id, ["up", "down", "left", "right",
+                                                    "up_left", "up_right", "down_left", "down_right"], 8, game)
 
 
 class Rook(Piece):
@@ -209,9 +224,7 @@ class Rook(Piece):
 class Bishop(Piece):
     def __init__(self, cords, size, screen_size,  texture_url, padding, id, game):
         super().__init__(cords, size, screen_size,
-                         texture_url, padding, id, ["up-left", "up-right", "down-left", "down-right"], 8, game)
-        self.directions = ["up_left", "up_right", "down_left", "down_right"]
-        self.squares = 8
+                         texture_url, padding, id, ["up_left", "up_right", "down_left", "down_right"], 8, game)
 
 
 class King(Piece):
