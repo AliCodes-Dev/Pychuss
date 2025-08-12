@@ -22,18 +22,21 @@ class Game:
         self.next_moves_surface: None | pygame.Surface = None
         self._set_clock()
 
-    def change_turn(self, piece_id: str) -> None:
-        piece = self.board.get_piece(piece_id)
-        if piece is None:
-            print(f"Invalid piece_id: {piece_id}")
-            return
+    def get_next_player(self) -> Player:
+        return self.players[(self.current_player + 1) % 2]
 
-        piece.selected = False
-        self.players[self.current_player].selected = False
+    def get_current_player(self) -> Player:
+        return self.players[self.current_player]
 
+    def _toggle_player(self):
         self.current_player = (self.current_player + 1) % 2
+
+    def change_turn(self) -> None:
+        self.players[self.current_player].selected = False
+        self._toggle_player()
+        self.players[self.current_player].start_turn(self.get_next_player())
         self.next_moves_surface = None
-        piece.valid_moves.clear()
+        self.get_next_player().revoke_turn()
 
     def _set_players(self) -> None:
         self.black = Player(self, "black")
@@ -47,7 +50,7 @@ class Game:
 
     def _render_pieces(self) -> None:
 
-        for piece in self.board.pieces.values():
+        for piece in self.board.get_all_pieces():
             piece.render_piece()
 
     def _setWindow(self) -> None:

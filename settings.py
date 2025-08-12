@@ -8,7 +8,7 @@ class Settings:
         self.BOARD_SIZE = 8
         self.squarewidth = self.SCREEN_WIDTH/self.BOARD_SIZE
         self.squareheight = self.SCREEN_HEIGHT/self.BOARD_SIZE
-        self.frame_rate = 60
+        self.frame_rate = 30
         self.title = "PyChuss"
         self.icon = "icon.png"
         self.next_move_icon = "assets/move.png"
