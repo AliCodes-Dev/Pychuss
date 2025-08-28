@@ -2,10 +2,10 @@ import pygame
 from pieces import Piece
 import pieces
 
-from typing import Tuple, List, TYPE_CHECKING, Optional,Iterator
+from typing import Tuple, List, TYPE_CHECKING, Optional, Iterator
 
 if TYPE_CHECKING:
-    from main import Game
+    from main_old import Game
 
 
 piece_classes = {
@@ -21,7 +21,9 @@ piece_classes = {
 class Board:
     def __init__(self, settings) -> None:
         self.BOARD_SIZE = settings.BOARD_SIZE
+        self.settings = settings
         self.board = settings.emptyboard
+        self.size = settings.BOARD_SIZE
         self.pieces = {}
 
     def set_piece(self, piece: Piece) -> None:
@@ -49,7 +51,7 @@ class Board:
             piece_id = self.get_piece_id(coords)
             if piece_id:
                 return self.pieces[piece_id]
-            return 
+            return
 
         raise ValueError(
             "Must provide either piece_id or coords to get a piece.")
@@ -57,13 +59,12 @@ class Board:
     def get_all_pieces(self) -> Iterator[Piece]:
         yield from self.pieces.values()
 
-
     def remove_piece(self, target_piece_id: str) -> None:
         piece = self.get_piece(target_piece_id)
         self.board[piece.rank][piece.file] = None
         self.pieces.pop(target_piece_id)
 
-    def create_piece(self, piece_type: str, coords: Tuple[int, int], piece_id: List[str], color,game: "Game") -> None:
+    def create_piece(self, piece_type: str, coords: Tuple[int, int], piece_id: List[str], color, game: "Game") -> None:
         if piece_type not in piece_classes:
             raise ValueError(f"Invalid piece type: {piece_type}")
         rank, file = coords
@@ -82,10 +83,17 @@ class Board:
             color,
             game
         )
-        game.players[(game.current_player+1) % 2].pieces.append(piece.id)
+        game.get_current_player().pieces.append(piece.id)
 
     def __str__(self) -> str:
         return "\n".join(str(rank) for rank in self.board)
+
+    def __len__(self) -> int:
+        return self.size
+
+    def clear(self):
+        self.board = self.settings.emptyboard
+        self.pieces.clear()
 
     def render_board(self, screen: pygame.Surface, size: Tuple[int | float, int | float], tiles: list[pygame.Surface]) -> None:
         width, height = size
@@ -98,4 +106,3 @@ class Board:
                 screen.blit(tiles[(rank+file) % 2], (x, y))
                 x += width
             y += height
-    

@@ -6,10 +6,18 @@ import pieces
 
 from typing import TYPE_CHECKING, Tuple
 if TYPE_CHECKING:
-    from main import Game
+    from Scenes.game_scene import GameScene
     from pieces import King
 
 
+import logging
+from rich.logging import RichHandler
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()]
+)
 start_ranks = {
     "black": 0,
     "white": 6
@@ -34,18 +42,21 @@ piece_map = [
 
 
 class Player:
-    def __init__(self, game: "Game", color: str) -> None:
+    def __init__(self, game: "GameScene", color: str) -> None:
         """Initialize a player with their pieces and state."""
         self.color = color
-        self.game = game
+        self.game_scene = game
         self.start_rank = start_ranks[color]
         self.pieces: list[str] = []
         self.selected = False
         self.selected_piece: str = ""
         self._create_pieces()
         # Always keep a direct reference to the king piece
-        self.king: King = self.game.board.get_piece(f"{self.color}_king")
-
+        self.king: King = self.game_scene.board.get_piece(f"{self.color}_king")
+        self.playable_moves_in_check = -1
+        self.turn_complete = False
+        
+    
     def _create_pieces(self) -> None:
         """Create and place all pieces for this player."""
         rank = self.start_rank
@@ -62,107 +73,113 @@ class Player:
                 piece_id = f"{self.color}_{piece_type}{piece_index}"
                 piece = piece_class(
                     (rank, file),
-                    (self.game.settings.squarewidth,
-                     self.game.settings.squareheight),
-                    (self.game.settings.SCREEN_WIDTH,
-                     self.game.settings.SCREEN_HEIGHT),
+                    (self.game_scene.settings.squarewidth,
+                     self.game_scene.settings.squareheight),
+                    (self.game_scene.settings.SCREEN_WIDTH,
+                     self.game_scene.settings.SCREEN_HEIGHT),
                     f"assets/{self.color}/{piece_type}.png",
-                    self.game.settings.padding,
+                    self.game_scene.settings.padding,
                     piece_id,
                     self.color,
-                    self.game,
+                    self.game_scene,
                 )
                 self.pieces.append(piece_id)
             rank += 1
 
-    def get_all_valid_moves(self):
+    def get_all_valid_moves(self, save: bool = False):
         """Yield (valid_moves, piece) for all pieces of this player."""
         for piece_id in self.pieces:
-            piece = self.game.board.get_piece(piece_id)
-            valid_moves, check_by = piece.get_validmoves(
-                self.pieces, self.king.checked, save=False)
+            piece = self.game_scene.board.get_piece(piece_id)
+            if piece.type == "pawn":
+                valid_moves,check_by = piece.get_pawn_capture_moves(self.pieces,False)
+            else:
+                logging.debug(f"Getting moves for {piece.id}")
+                valid_moves, check_by = piece.generate_validmoves(
+                    self.pieces,  False)
             yield valid_moves, check_by
 
     def is_mate(self):
         """Check if the player is in checkmate."""
-        if self.king.checked and self.king.valid_moves is not None and not self.king.valid_moves:
-            print(f"{self.game.get_current_player().color} has been checkmated!")
+        # if self.king.checked and self.king.valid_moves is not None and not self.king.valid_moves:
+        #     print(f"{self.game_scene.get_current_player().color} has been checkmated!")
+        self.king.generate_safe_king_moves(self.pieces)
+        if self.king.checked:
+            self.king.generate_check_defenses(self.pieces)
 
-    def is_king_in_check(self, checking_piece):
-        if checking_piece:
-            self.king.checked = True
-            self.king.checking_piece.append(checking_piece)
+        if self.playable_moves_in_check == 0 and self.king.checked:
+            logging.warning(
+                f"{self.game_scene.get_current_player().color} has been checkmated!")
+            self.game_scene.is_game_over = True
 
-    def filter_king_moves(self, opp_player):
-        self.king.get_validmoves(self.pieces, self.king.checked)
-        king_moves = self.king.valid_moves
-        danger_sqs = set()
-        for valid_moves, piece in opp_player.get_all_valid_moves():
-            intersection = king_moves & valid_moves
-            danger_sqs.update(intersection)
-            self.is_king_in_check(piece)
-
-        self.king.valid_moves -= danger_sqs
+    
 
     def start_turn(self, opp_player: "Player"):
         """Prepare for this player's turn: update king's moves and check status."""
         self.king.checked = False
-        self.king.checking_piece.clear()
-        self.filter_king_moves(opp_player)
-        print("Kings Final Moves:", self.king.valid_moves)
+        self.king.checking_pieces.clear()
         self.is_mate()
-
+        self.king.detect_pins(self.pieces)
+        
     def revoke_turn(self):
+        self.playable_moves_in_check = 0
+        self.king.checked = False
         for piece_id in self.pieces:
-            self.game.board.get_piece(piece_id).valid_moves = None
+            piece = self.game_scene.board.get_piece(piece_id)
+            piece.valid_moves = None
+            piece.pinned_status = {"pinned": False, "allowed_dir": ["all"]}
+            
+            
+
+    
 
     def _handle_move_selected_piece(self, pos: Tuple[int, int]) -> None:
         """Handle moving the selected piece to a new position."""
-        self.game.board.get_piece(self.selected_piece).move_Piece(
-            pos, self.pieces, self.king.checked)
+        self.game_scene.board.get_piece(self.selected_piece).move_piece(
+            pos, self.pieces)
+        
 
     def _handle_deselect_piece(self, piece_id: str) -> None:
         """Deselect the currently selected piece."""
-        self.game.board.pieces[piece_id].selected = False
+        self.game_scene.board.pieces[piece_id].selected = False
         self.selected_piece = ''
         self.selected = False
-        self.game.next_moves_surface = None
+        self.game_scene.next_moves_surface = None
 
     def _handle_switch_selected_piece(self, piece_id: str) -> None:
         """Switch selection to another of the player's own pieces."""
-        self.game.board.get_piece(self.selected_piece).selected = False
+        self.game_scene.board.get_piece(self.selected_piece).selected = False
         self.selected_piece = piece_id
-        self.game.board.get_piece(piece_id).selected = True
-        self.game.board.get_piece(
-            piece_id).make_move_surface(self.king.checked)
+        self.game_scene.board.get_piece(piece_id).selected = True
+        self.game_scene.board.get_piece(
+            piece_id).make_move_surface()
 
     def _handle_capture_opponent_piece(self, pos: Tuple[int, int]) -> None:
         """Handle capturing an opponent's piece."""
-        self.game.board.get_piece(self.selected_piece).capture(
-            pos, self.pieces, self.king.checked)
+        self.game_scene.board.get_piece(self.selected_piece).capture(
+            pos, self.pieces)
 
     def _handle_select_own_piece(self, piece_id: str) -> None:
         """Select one of the player's own pieces."""
         if self.king.checked:
             self.king.highlight_check()
-        self.game.board.get_piece(piece_id).selected = True
+        self.game_scene.board.get_piece(piece_id).selected = True
         self.selected_piece = piece_id
         self.selected = True
-        self.game.board.get_piece(
-            piece_id).make_move_surface(self.king.checked)
+        self.game_scene.board.get_piece(
+            piece_id).make_move_surface()
 
     def check_selection(self, event: pygame.event.Event) -> None:
         if event.type != pygame.MOUSEBUTTONDOWN or event.button != 1:
             return
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        rank = int(mouse_y // self.game.settings.squareheight)
-        file = int(mouse_x // self.game.settings.squarewidth)
+        rank = int(mouse_y // self.game_scene.settings.squareheight)
+        file = int(mouse_x // self.game_scene.settings.squarewidth)
 
-        if rank >= 8 or file >= 8:
+        if rank >= len(self.game_scene.board) or file >= len(self.game_scene.board):
             return
 
-        piece_id = self.game.board.get_piece_id((rank, file))
+        piece_id = self.game_scene.board.get_piece_id((rank, file))
         print(f"Piece_ID: {piece_id}")
         print(f"rank: {rank}, File: {file}")
 

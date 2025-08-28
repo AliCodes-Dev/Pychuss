@@ -1,98 +1,112 @@
 import pygame
+import logging
+from rich.logging import RichHandler
 
 
-import settings
-from player import Player
-from board import Board
+from  settings import Settings,ColorPalette
+
+from Scenes.main_menu import MainMenu
+from Scenes.game_scene import GameScene
+from Scenes.pause_menu import PauseMenu
+
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()]
+)
 
 
 class Game:
     def __init__(self) -> None:
         pygame.init()
 
-        self.settings = settings.Settings()
-        self._setWindow()
-        self.board = Board(self.settings)
-
-        self._set_players()
-
-        self.tiles = self.settings.tiles
-
-        self.next_move_icon = pygame.image.load(self.settings.next_move_icon)
-        self.next_moves_surface: None | pygame.Surface = None
+        self.settings = Settings()
+        self._set_window()
         self._set_clock()
 
-    def get_next_player(self) -> Player:
-        return self.players[(self.current_player + 1) % 2]
+        self.is_game_over = False
+        self.running = True
 
-    def get_current_player(self) -> Player:
-        return self.players[self.current_player]
+        # start at main menu
+        self.gamescene = GameScene(self)
+        self.mainmenu_scene = MainMenu(self)
+        self.pausemenu = PauseMenu(self)
+        self.current_scene = self.mainmenu_scene
+        self.update_title()
 
-    def _toggle_player(self):
-        self.current_player = (self.current_player + 1) % 2
+    def _set_window(self) -> None:
+        self.screen = pygame.display.set_mode(
+            (self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT)
+        )
+        pygame.display.set_caption(self.settings.title)
+        icon = pygame.image.load(self.settings.icon)
+        pygame.display.set_icon(icon)
 
-    def change_turn(self) -> None:
-        self.players[self.current_player].selected = False
-        self._toggle_player()
-        self.players[self.current_player].start_turn(self.get_next_player())
-        self.next_moves_surface = None
-        self.get_next_player().revoke_turn()
 
-    def _set_players(self) -> None:
-        self.black = Player(self, "black")
-        self.white = Player(self, "white")
-        self.players = [self.white, self.black]
-        self.current_player = 0
+    def switch_scene(self,scene):
+        self.current_scene = scene
+        self.screen.fill(ColorPalette.BLACK.value)
+        self.update_title()
+
+
+    def update_title(self):
+        pygame.display.set_caption(self.current_scene.name)
+
+    def quit(self):
+        self.running = False
+
+    def restart(self):
+        # self.gamescene.restart()
+        # self.switch_scene(self.gamescene)
+        logging.info("Restart Method is not implemented yet.")
+        
+
+    def resume(self):
+        self.current_scene = self.gamescene
+        self.switch_scene(self.gamescene)
+        
+
+    def pause(self):
+        self.switch_scene(self.pausemenu)
+        
+
+    def quit_to_menu(self):
+        self.switch_scene(self.mainmenu_scene)
+
+    def play(self):
+        self.gamescene.restart()
+
+        pygame.mouse.set_cursor(
+            pygame.SYSTEM_CURSOR_ARROW)
+        self.switch_scene(self.gamescene)
 
     def _set_clock(self) -> None:
         self.clock = pygame.time.Clock()
-        self.running = True
 
-    def _render_pieces(self) -> None:
+    def _tick_clock(self) -> float:
+        dt = self.clock.tick(self.settings.frame_rate)
+        return dt / 1000  # convert to seconds
 
-        for piece in self.board.get_all_pieces():
-            piece.render_piece()
-
-    def _setWindow(self) -> None:
-        self.screen = pygame.display.set_mode(
-            (self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT))
-
-        pygame.display.set_caption(self.settings.title)
-        self.icon = pygame.image.load(self.settings.icon)
-        pygame.display.set_icon(self.icon)
-
-    def _render_board(self) -> None:
-        self.board.render_board(
-            self.screen, (self.settings.squarewidth, self.settings.squareheight), self.tiles)
-
-    def _checkEvents(self) -> None:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.players[self.current_player].check_selection(event)
-
-    def _updateWindow(self) -> None:
-        pygame.display.flip()
-        self.clock.tick(self.settings.frame_rate)
-
-    def _show_moves(self) -> None:
-        if self.next_moves_surface:
-            self.screen.blit(self.next_moves_surface, (0, 0))
-
-    def runGame(self) -> None:
+    def run(self) -> None:
         while self.running:
-            try:
-                self._checkEvents()
-                self._render_board()
-                self._render_pieces()
-                self._show_moves()
+            dt = self._tick_clock()
 
-                self._updateWindow()
-            except KeyboardInterrupt:
-                print("Bye Bye")
-                self.running = False
+            # global events (like quitting)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                else:
+                    # current scene handle your own events!!!
+                    self.current_scene.handle_event(event)
+
+            # update + render
+            self.current_scene.update(dt)
+            self.current_scene.draw(self.screen)
+
+            pygame.display.flip()
 
 
-chess_game = Game()
-chess_game.runGame()
+if __name__ == "__main__":
+    Game().run()
