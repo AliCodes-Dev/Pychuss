@@ -17,7 +17,7 @@ class PauseMenu(Scene):
         self.overlay = Panel(
             0, 0, self.game.settings.SCREEN_WIDTH, self.game.settings.SCREEN_HEIGHT,
             border_width=0,
-            bg_color=(0, 0, 0, 180)  # black with alpha for dim effect
+            bg_color=(0, 0, 0, 180) 
         )
 
         # Title
@@ -81,5 +81,5 @@ class PauseMenu(Scene):
         pass
 
     def draw(self, screen):
-        # Instead of clearing, we just draw the overlay panel on top
+        
         self.overlay.draw(screen)

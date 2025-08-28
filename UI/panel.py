@@ -46,7 +46,7 @@ class Panel:
         self.components.append(comp)
 
     def draw(self, screen):
-        self.surface.fill((0, 0, 0, 0))  # transparent
+        
 
         pygame.draw.rect(
             self.surface,
