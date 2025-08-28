@@ -34,43 +34,41 @@ Great for learning:
 
 ## 🧱 Features
 
-- ✅ Interactive chessboard with mouse-driven moves  
-- ✅ Accurate piece movement (all standard rules except en passant)  
-- ✅ Capturing, castling, and pawn promotion (defaults to queen)  
-- ✅ Check and checkmate detection  
-- ✅ Turn-based play (White vs Black)  
+- ✅ Interactive chessboard with mouse-driven moves
+- ✅ Accurate piece movement (all standard rules except en passant)
+- ✅ Capturing, castling, and pawn promotion (defaults to queen)
+- ✅ Check and checkmate detection
+- ✅ Turn-based play (White vs Black)
 - ✅ Scene-based UI system:
   - Main menu
   - Game scene
-  - Pause menu  
-- ✅ Custom font + pixel-art style pieces  
-- ✅ Modular, OOP-driven codebase for easy extension  
+  - Pause menu
+- ✅ Custom font + pixel-art style pieces
+- ✅ Modular, OOP-driven codebase for easy extension
 
 ---
 
 ## 🚧 Roadmap
 
-- ♚ En passant rule support  
-- ✨ Stalemate and draw conditions  
-- 🎨 Improved UI polish (win screen, restart menu, animations)  
-- 📸 Gameplay GIFs/screenshots  
+- ♚ En passant rule support
+- ✨ Stalemate and draw conditions
+- 🎨 Improved UI polish (win screen, restart menu, animations)
+- 📸 Gameplay GIFs/screenshots
 
 ---
 
 ## 🛠 Tech Stack
 
-| Tool      | Purpose                    |
-|-----------|----------------------------|
-| 🐍 Python | Main programming language  |
-| 🎮 Pygame | Rendering, input handling  |
-| 🌀 Git    | Source control             |
-|  rich    | Debugging          |
+| Tool      | Purpose                   |
+| --------- | ------------------------- |
+| 🐍 Python | Main programming language |
+| 🎮 Pygame | Rendering, input handling |
+| 🌀 Git    | Source control            |
+| rich      | Debugging                 |
 
 ---
 
 ## 📂 Project Structure
-
-
 
 ```
 PyChuss/
@@ -98,7 +96,6 @@ PyChuss/
 └── description.md # Extra project notes
 ```
 
-
 ---
 
 ## 🚀 Getting Started
@@ -118,12 +115,20 @@ PyChuss/
 > **Note:** Works best with Python 3.10+.  
 > Ensure your assets are in place for sprites to load correctly.
 
----
+## ScreenShots
 
+<p align="center">
+  <img src="assets/screenshots/main_menu.png" alt="Gameplay" width="300"/>
+  <img src="assets/screenshots/game.png" alt="Board" width="300"/>
+  <img src="assets/screenshots/game_play.png" alt="Gameplay" width="300"/>
+</p>
 
+<p align="center">
+  <img src="assets/screenshots/Gameplay%20-%20Castle.gif" alt="Castle Move" width="400"/>
+  <img src="assets/screenshots/output.gif" alt="Output Test" width="400"/>
+</p>
 
 ## ⚖️ License
 
 MIT License.  
 Feel free to use, modify, and learn from this project. Please don’t claim it as your own for resale.
-
