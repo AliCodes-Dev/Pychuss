@@ -1,10 +1,60 @@
 import pygame
 from player import Player
 from board import Board
+from UI.panel import Panel
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from main import Game
+
+
+def make_coming_soon_panel(x: int, y: int,
+                           panel_w: int = 420, panel_h: int = 260) -> Panel:
+    panel = Panel(
+        x, y, panel_w, panel_h,
+        border_width=3,
+        border_radius=14,
+        bg_color=(25, 25, 25, 230),   # darker semi-transparent background
+        border_color=(200, 200, 200)  # light gray border
+    )
+
+    # Title
+    panel.add_component(
+        "Label",
+        text="Game Controls",
+        font_size=28,
+        pos=(panel_w // 2, 40),
+        bold=True,
+        color=(255, 215, 0)  
+    )
+
+    
+    panel.add_component(
+        "Label",
+        text=" Move history/b/ Resign button /b/ Draw offer/b/ More coming soon...",
+        font_size=18,
+        pos=(panel_w // 2, panel_h // 2),
+        bold=False,
+        color=(200, 200, 200),
+    )
+
+    # Footer
+    panel.add_component(
+        "Label",
+        text="(Feature in development)",
+        font_size=14,
+        pos=(panel_w // 2, panel_h - 30),
+        bold=False,
+        color=(150, 150, 150)
+    )
+
+    return panel
+
+
 
 
 class GameScene:
-    def __init__(self, game):
+    def __init__(self, game: "Game"):
+
         self.game = game
         self.settings = game.settings
         self.name = "Playing"
@@ -16,6 +66,8 @@ class GameScene:
         self.next_moves_surface: None | pygame.Surface = None
         self.next_move_icon = pygame.image.load(self.settings.next_move_icon)
         self.hovering = False
+        self.coming_soon_panel = make_coming_soon_panel(
+            x=self.settings.BOARD_WIDTH, y=0, panel_w=self.settings.BOARD_WIDTH, panel_h=self.settings.BOARD_HEIGHT)
 
     def restart(self):
         self.white.pieces.clear()
@@ -32,7 +84,7 @@ class GameScene:
 
     def _set_players(self):
         self.white = Player(self, "white")
-        
+
         self.black = Player(self, "black")
         self.players = [self.white, self.black]
         for piece in self.board.get_all_pieces():
@@ -95,3 +147,5 @@ class GameScene:
         # show valid moves
         if self.next_moves_surface:
             surface.blit(self.next_moves_surface, (0, 0))
+
+        self.coming_soon_panel.draw(surface)

@@ -12,7 +12,8 @@ class Label:
             offset_y: int = 0,
             bold: bool = False,
             font_style: str | None = None,
-            color: Tuple[int, int, int] = (255, 255, 255)
+            color: Tuple[int, int, int] = (255, 255, 255),
+            line_spacing: int = 4
     ) -> None:
 
         self.text = text
@@ -22,37 +23,24 @@ class Label:
         self.font.set_bold(bold)
         self.text_surface = self.font.render(self.text, True, self.color)
         self.text_rect = self.text_surface.get_rect(center=pos)
+        self.line_spacing = line_spacing
+        self.lines = []
+
+        if "/b/" in self.text:
+            for i, line in enumerate(self.text.split("/b/")):
+                new_line_surf = self.font.render(line, True, self.color)
+                rect = new_line_surf.get_rect()
+
+                rect.midtop = pos[0], pos[1] + i * \
+                    (self.font_size + self.line_spacing)
+
+                self.lines.append((new_line_surf, rect))
+        else:
+            self.text_surface = self.font.render(self.text, True, self.color)
 
     def draw(self, surface: pygame.Surface):
+        if self.lines:
+            for surf, rect in self.lines:
+                surface.blit(surf, rect)
+            return
         surface.blit(self.text_surface, self.text_rect)
-
-
-# pygame.init()
-
-# screen = pygame.display.set_mode((400, 300))
-
-# # Make a "card" surface
-# card = pygame.Surface((200, 120), pygame.SRCALPHA)  # SRCALPHA → allows transparency
-
-# rect = pygame.Rect(0, 0, 200, 120)
-
-# # Background rectangle (filled)
-# pygame.draw.rect(card, (30, 30, 30), rect, border_radius=12)
-
-# # Outline rectangle on top
-# pygame.draw.rect(card, (200, 200, 200), rect, width=3, border_radius=12)
-
-# # Smaller inner rect (like highlight or section)
-# inner = rect.inflate(-20, -20)
-# pygame.draw.rect(card, (100, 180, 250), inner, border_radius=8)
-
-# # Game loop
-# running = True
-# while running:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-
-#     screen.fill((0, 0, 0))
-#     screen.blit(card, (100, 90))  # slap your card onto the main screen
-#     pygame.display.flip()

@@ -5,8 +5,6 @@ import pygame
 import logging
 
 from typing import TYPE_CHECKING, List, Tuple, Set
-if TYPE_CHECKING:
-    from main_old import Game  # Adjust the import path if needed
 
 from rich.logging import RichHandler
 
@@ -103,9 +101,7 @@ class Piece:
             self.generate_validmoves(allies)
 
     def make_move_surface(self) -> None:
-        # if is_king_in_check and self.type != "king":
-        #     print("King is in check")
-        #     return
+
         self.ensure_valid_moves(
             self.game_scene.get_current_player().pieces)
 
@@ -212,7 +208,7 @@ class Piece:
         pin_status, legal_direction = self.pinned_status.values()
 
         if pin_status and enforce_rules:
-            print(f"{self.id} is pinned, Valid dir is {legal_direction}")
+            # print(f"{self.id} is pinned, Valid dir is {legal_direction}")
             self.valid_moves = valid_moves
             directions = legal_direction if legal_direction[0] in self.directions else [
             ]
@@ -243,7 +239,7 @@ class Piece:
             self.game_scene.screen,
             (255, 255, 0),  # Yellow color
             pygame.Rect(rect_x, rect_y, rect_w, rect_h),
-            4  # Thickness of the border
+            width=4  # Thickness of the border
         )
 
     def render_piece(self) -> None:
@@ -317,7 +313,7 @@ class Pawn(Piece):
             y_dir, x_dir = pin_dir[0].split(
                 "_") if "_" in pin_dir[0] else (pin_dir[0], "")
 
-            print(f"{self.id} is pinned")
+            # print(f"{self.id} is pinned")
             if not self.directions[0].startswith(y_dir):
                 self.valid_moves = moves
 
@@ -385,7 +381,7 @@ class Pawn(Piece):
         self.board.remove_piece(self.id)
         self.game_scene.get_current_player().pieces.remove(self.id)
         p_type = "queen"
-        logging.info(f"Promoting {self.id} on {self.pos} to a {p_type}")
+        # logging.info(f"Promoting {self.id} on {self.pos} to a {p_type}")
         self.board.create_piece(p_type, (rank, file),
                                 piece_id, self.color, self.game_scene)
 
@@ -439,7 +435,8 @@ class King(Piece):
         self.castle_moves = set()
 
     def filter_moves_to(self, *_, **__):
-        logging.debug(f"This method is deleted for king")
+        # logging.debug(f"This method is deleted for king")
+        pass
 
     def register_check(self, checking_piece_id):
         if checking_piece_id:
@@ -447,7 +444,7 @@ class King(Piece):
             self.checking_pieces.append(checking_piece_id)
 
     def generate_safe_king_moves(self, allies):
-        logging.debug(f"Generating Safe King Moves...")
+        # logging.debug(f"Generating Safe King Moves...")
 
         self.generate_validmoves(allies)
         king_moves = self.valid_moves
@@ -456,8 +453,8 @@ class King(Piece):
 
         for enemy_moves, attacker_id in self.game_scene.get_next_player().get_all_valid_moves():
             overlap = (king_moves | castle_moves) & enemy_moves
-            logging.debug(
-                f"{overlap}, Current Piece is  {attacker_id}")
+            # logging.debug(
+                # f"{overlap}, Current Piece is  {attacker_id}")
             unsafe_sqs.update(overlap)
             self.register_check(attacker_id)
 
@@ -465,7 +462,7 @@ class King(Piece):
         castle_moves -= unsafe_sqs
         self.generate_castle_moves(castle_moves)
 
-        logging.info(f"{self.color} Kings Final Moves:{self.valid_moves}")
+        # logging.info(f"{self.color} Kings Final Moves:{self.valid_moves}")
 
         self.game_scene.get_current_player().playable_moves_in_check += len(self.valid_moves)
 
@@ -473,19 +470,19 @@ class King(Piece):
         """Restrict ally moves to block or capture the checking piece."""
 
         if (attackers := len(self.checking_pieces)) >= 2:
-            logging.debug(
-                f"King is threatened by {attackers} pieces. No blocks possible — king must move."
-            )
+            # logging.debug(
+            #     f"King is threatened by {attackers} pieces. No blocks possible — king must move."
+            # )
             return
 
         attacker = self.game_scene.board.get_piece(self.checking_pieces[0])
         attacker_pos = attacker.pos
 
-        logging.info(f"Checking piece at {attacker_pos}")
+        # logging.info(f"Checking piece at {attacker_pos}")
 
         blocks = set()
         if attacker.category == "sliding":
-            logging.debug("Generating block squares...")
+            # logging.debug("Generating block squares...")
             blocks = self.generate_check_block_path(attacker_pos)
 
         defense_squares = blocks | {attacker_pos}
@@ -497,7 +494,7 @@ class King(Piece):
     def generate_check_block_path(self, threat_piece_coord: Tuple[int, int]) -> Set[Tuple[int, int]]:
         ky, kx = self.pos
         hy, hx = threat_piece_coord
-        logging.debug(f"Making safe path for the piece on {hy, hx}")
+        # logging.debug(f"Making safe path for the piece on {hy, hx}")
 
         dx = hx - kx
         dy = hy - ky
@@ -565,7 +562,7 @@ class King(Piece):
             # Collect pieces in this line (up to 2 potential targets)
             seen_pieces = self.detect_pieces_in_direction(
                 step=step, n_pieces=2, limit=len(self.board) * 2)
-            print(seen_pieces)
+            # print(seen_pieces)
 
             if len(seen_pieces) != 2:
                 continue
@@ -579,7 +576,7 @@ class King(Piece):
             attacker = self.board.get_piece(piece_id=attacker_id)
 
             if reverse_name in attacker.directions and attacker.category == "sliding":
-                print("Pinning the piece", pinned_id)
+                # print("Pinning the piece", pinned_id)
                 pinned = self.board.get_piece(piece_id=pinned_id)
                 pinned.pinned_status["pinned"] = True
                 pinned.pinned_status["allowed_dir"] = [dir_name]

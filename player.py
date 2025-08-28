@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 import logging
 from rich.logging import RichHandler
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
     handlers=[RichHandler()]
@@ -93,7 +93,7 @@ class Player:
             if piece.type == "pawn":
                 valid_moves,check_by = piece.get_pawn_capture_moves(self.pieces,False)
             else:
-                logging.debug(f"Getting moves for {piece.id}")
+                # logging.debug(f"Getting moves for {piece.id}")
                 valid_moves, check_by = piece.generate_validmoves(
                     self.pieces,  False)
             yield valid_moves, check_by

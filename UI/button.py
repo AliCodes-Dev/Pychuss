@@ -25,8 +25,7 @@ class Button:
         bg_color: Tuple[int, int, int] = (50, 50, 50),
         text_color: Tuple[int, int, int] = (255, 255, 255)
     ) -> None:
-        print(locals())
-
+        
         self.rect = pygame.Rect(x, y, width, height)
 
         self.rect.center = x, y

@@ -46,7 +46,6 @@ class Panel:
         self.components.append(comp)
 
     def draw(self, screen):
-        
 
         pygame.draw.rect(
             self.surface,
@@ -82,3 +81,5 @@ class Panel:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND) if hovering else pygame.mouse.set_cursor(
                 pygame.SYSTEM_CURSOR_ARROW)
             self.hovering = hovering
+
+

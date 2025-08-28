@@ -13,11 +13,11 @@ class PauseMenu(Scene):
         super().__init__(game)
         self.name = "Paused"
 
-        # Semi-transparent overlay panel
+        # Semi-transparent overlay using PANEL color
         self.overlay = Panel(
             0, 0, self.game.settings.SCREEN_WIDTH, self.game.settings.SCREEN_HEIGHT,
             border_width=0,
-            bg_color=(0, 0, 0, 180) 
+            bg_color=(*ColorPalette.PANEL.value, 180)  # consistent with style
         )
 
         # Title
@@ -26,53 +26,38 @@ class PauseMenu(Scene):
             text="Paused",
             color=ColorPalette.TEXT.value,
             pos=(self.game.settings.SCREEN_WIDTH // 2, 120),
-            font_size=28,
-            font_style="assets/font/PressStart2P.ttf"
-        )
-
-        # Resume button
-        self.overlay.add_component(
-            "Button",
-            x=self.game.settings.SCREEN_WIDTH // 2, y=220,
-            width=200, height=50,
-            text="Resume",
-            bg_color=ColorPalette.BUTTON.value,
-            border_radius=12,
-            on_click=self.game.resume,
-            font_size=24,
+            font_size=36,
             font_style="assets/font/PressStart2P.ttf",
-            text_color=ColorPalette.TEXT_SECONDARY.value
+            
+            bold=True
         )
 
-        # Restart button
-        self.overlay.add_component(
-            "Button",
-            x=self.game.settings.SCREEN_WIDTH // 2, y=300,
-            width=200, height=50,
-            text="Restart",
-            bg_color=ColorPalette.BUTTON.value,
-            border_radius=12,
-            on_click=self.game.restart,
-            font_size=24,
-            font_style="assets/font/PressStart2P.ttf",
-            text_color=ColorPalette.TEXT_SECONDARY.value
-        )
+        btn_w, btn_h = 220, 55
+        btn_x = self.game.settings.SCREEN_WIDTH // 2
+        start_y = 220
+        spacing = 80
 
-        # Quit to main menu
-        self.overlay.add_component(
-            "Button",
-            x=self.game.settings.SCREEN_WIDTH // 2, y=380,
-            width=250, height=50,
-            text="Main Menu",
-            bg_color=ColorPalette.BUTTON.value,
-            border_radius=12,
-            on_click=self.game.quit_to_menu,
-            font_size=24,
-            font_style="assets/font/PressStart2P.ttf",
-            text_color=ColorPalette.TEXT_SECONDARY.value
-        )
+        buttons = [
+            ("Resume", self.game.resume),
+            ("Restart", self.game.restart),
+            ("Main Menu", self.game.quit_to_menu),
+        ]
 
-        pygame.display.set_caption("Paused")
+        for i, (label, callback) in enumerate(buttons):
+            self.overlay.add_component(
+                "Button",
+                x=btn_x, y=start_y + i * spacing,
+                width=btn_w, height=btn_h,
+                text=label,
+                bg_color=ColorPalette.BUTTON.value,
+                hover_color=ColorPalette.BUTTON_HOVER.value,
+                border_radius=14,
+                on_click=callback,
+                font_size=20,
+                font_style="assets/font/PressStart2P.ttf",
+                text_color=ColorPalette.TEXT.value
+            )
+
 
     def handle_event(self, event):
         self.overlay.handle_event(event)
