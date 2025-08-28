@@ -115,18 +115,26 @@ PyChuss/
 > **Note:** Works best with Python 3.10+.  
 > Ensure your assets are in place for sprites to load correctly.
 
-## ScreenShots
+
+## 🎮 Screenshots
 
 <p align="center">
-  <img src="assets/screenshots/main_menu.png" alt="Gameplay" width="300"/>
-  <img src="assets/screenshots/game.png" alt="Board" width="300"/>
-  <img src="assets/screenshots/game_play.png" alt="Gameplay" width="300"/>
+  <img src="assets/screenshots/main_menu.png" alt="Main Menu" width="300"/>
+  <br/><em>Main Menu</em>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/game.png" alt="Chess Board" width="350"/>
+  <img src="assets/screenshots/game_play.png" alt="Gameplay" width="350"/>
+  <br/><em>Board & Gameplay</em>
 </p>
 
 <p align="center">
   <img src="assets/screenshots/Gameplay%20-%20Castle.gif" alt="Castle Move" width="400"/>
   <img src="assets/screenshots/output.gif" alt="Output Test" width="400"/>
+  <br/><em>Castling & Move Outputs</em>
 </p>
+
 
 ## ⚖️ License
 
