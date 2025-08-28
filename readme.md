@@ -64,6 +64,7 @@ Great for learning:
 | 🐍 Python | Main programming language  |
 | 🎮 Pygame | Rendering, input handling  |
 | 🌀 Git    | Source control             |
+|  rich    | Debugging          |
 
 ---
 
@@ -105,7 +106,7 @@ PyChuss/
 1. **Install dependencies:**
 
    ```bash
-   pip install pygame
+   pip install pygame,rich
    ```
 
 2. **Run the game:**
