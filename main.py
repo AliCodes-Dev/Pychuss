@@ -64,7 +64,7 @@ class Game:
         
 
     def resume(self):
-        self.current_scene = self.gamescene
+        
         self.switch_scene(self.gamescene)
         
 
